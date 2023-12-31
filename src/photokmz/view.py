@@ -20,35 +20,18 @@ class VentanaPpal():
         self.list_img = []
         self.num_img = StringVar()
         self.num_img.set('No hay imagenes seleccionadas')
-        self.destino = StringVar()
-        self.destino.set(os.path.expanduser('~'))
         self.compresion = BooleanVar()
         self.compresion.set(True)
-        self.nombre = StringVar()
-        self.nombre.set('gps_imagenes')
-                    
+        self.path_file = StringVar()
+                            
 
         # Frames
         self.input_frame = ttk.LabelFrame(self.root, text="Datos")
         self.input_frame.pack(padx=10, pady=10,fill='x', expand=True)
         
-        self.output_frame = ttk.LabelFrame(self.root, text="Resultados")
-        self.output_frame.pack(padx=10, pady=10, expand=True)
-
-
         # Etiquetas
         self.seleccion_label = Label(self.input_frame, textvariable=self.num_img)
         self.seleccion_label.grid(row=0,column=1)
-        self.destino_label = Label(self.output_frame, text='Destino :')
-        self.destino_label.grid(row=0,column=0)
-        self.destino_label = Entry(self.output_frame, textvariable=self.destino, state='readonly', background="white")    
-        self.destino_label.grid(row=1,column=0, columnspan=2, ipadx=70)
-        self.nombre_label = Label(self.output_frame, text='Nombre del archivo KMZ :')
-        self.nombre_label.grid(row=2,column=0)
-
-        # Entrada
-        self.nombre_entry = Entry(self.output_frame, textvariable=self.nombre)    
-        self.nombre_entry.grid(row=2,column=1)
 
         #  	Checkbutton
         self.compresion_check = Checkbutton(self.input_frame, text='Comprimir imagenes',variable=self.compresion)
@@ -57,9 +40,6 @@ class VentanaPpal():
         # Boton añadir/
         self.boton_añadir = Button(self.input_frame, text = "SELECCIONAR", command = self.seleccionar,width=12)
         self.boton_añadir.grid(row=0, column=2)
-        # Boton examinar
-        self.boton_examinar = Button(self.output_frame,text="...",command=self.examinar,width=2)
-        self.boton_examinar.grid(row=1,column=2)
         # Boton crear
         self.boton_crear = Button(self.root,text="CREAR KMZ",command=self.crear_kmz,width=12)
         self.boton_crear.pack(padx=10, pady=10, expand=False)
@@ -81,18 +61,21 @@ class VentanaPpal():
             self.destino.set(os.path.expanduser('~'))
     
                  
-    def crear_kmz (self):
+    def crear_kmz (self):        
         if len(self.list_img) == 0 :
             showerror(message = f"No hay imagenes seleccionadas \nPor favor seleccione imagenes para poder crear el archivo kmz."
                        ,title = "Error")
         else:
+            self.path_file = asksaveasfilename(defaultextension='.kmz', filetypes=[('Archivos kmz','.kmz')])
+            file_name= os.path.basename(self.path_file)
+            dir_destino = os.path.dirname(self.path_file)
             try:
                 objeto_model = Model(self.list_img,
                                     self.compresion.get(),
-                                    self.destino.get(),
-                                    self.nombre.get())
+                                    dir_destino,
+                                    file_name)
                 objeto_model.crear_kmz()
-                showinfo(message=f"Se ha creado {self.nombre.get()}.kmz de manera exitosa"
+                showinfo(message=f"Se ha creado {file_name} de manera exitosa"
                         ,title="Creación finalizada")
             except TypeError:
                 showerror(message = f"Ha ocurrido un error"
