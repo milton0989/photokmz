@@ -72,8 +72,7 @@ class VentanaPpal():
             try:
                 objeto_model = Model(self.list_img,
                                     self.compresion.get(),
-                                    dir_destino,
-                                    file_name)
+                                    self.path_file)
                 objeto_model.crear_kmz()
                 showinfo(message=f"Se ha creado {file_name} de manera exitosa"
                         ,title="Creación finalizada")
