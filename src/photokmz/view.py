@@ -1,7 +1,7 @@
-from tkinter import StringVar, Label, Entry, Button, Tk, ttk, Frame, Checkbutton, BooleanVar
+from tkinter import StringVar, Label, Button, Tk, ttk, Checkbutton, BooleanVar
 import os
 from model import Model
-from tkinter.filedialog import askopenfiles, askopenfilenames, asksaveasfilename, askdirectory, asksaveasfile
+from tkinter.filedialog import askopenfilenames, asksaveasfilename, askdirectory
 from tkinter.messagebox import showinfo, showerror
 
 BASE_DIR = os.path.dirname((os.path.abspath(__name__)))
@@ -26,11 +26,11 @@ class VentanaPpal():
                             
 
         # Frames
-        self.input_frame = ttk.LabelFrame(self.root, text="Datos")
+        self.input_frame = ttk.LabelFrame(self.root, text=" Imagenes ")
         self.input_frame.pack(padx=10, pady=10,fill='x', expand=True)
         
         # Etiquetas
-        self.seleccion_label = Label(self.input_frame, textvariable=self.num_img)
+        self.seleccion_label = Label(self.input_frame, textvariable=self.num_img, width=30)
         self.seleccion_label.grid(row=0,column=1)
 
         #  	Checkbutton
@@ -39,13 +39,12 @@ class VentanaPpal():
 
         # Boton añadir/
         self.boton_añadir = Button(self.input_frame, text = "SELECCIONAR", command = self.seleccionar,width=12)
-        self.boton_añadir.grid(row=0, column=2)
+        self.boton_añadir.grid(row=0, column=0)
         # Boton crear
         self.boton_crear = Button(self.root,text="CREAR KMZ",command=self.crear_kmz,width=12)
         self.boton_crear.pack(padx=10, pady=10, expand=False)
 
-
-      
+    
 
     ########## METODOS DE LA VISTA ############
     def seleccionar (self):
@@ -68,7 +67,6 @@ class VentanaPpal():
         else:
             self.path_file = asksaveasfilename(defaultextension='.kmz', filetypes=[('Archivos kmz','.kmz')])
             file_name= os.path.basename(self.path_file)
-            dir_destino = os.path.dirname(self.path_file)
             try:
                 objeto_model = Model(self.list_img,
                                     self.compresion.get(),
@@ -80,10 +78,3 @@ class VentanaPpal():
                 showerror(message = f"Ha ocurrido un error"
                         ,title = "Error")
         
-
-
-if __name__ == '__main__':
-    root_tk = Tk()
-    VentanaPpal(root_tk)
-    
-    root_tk.mainloop()

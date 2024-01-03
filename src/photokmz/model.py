@@ -1,9 +1,7 @@
 import os
-import zipfile
 import shutil
 from PIL import Image
 import tempfile
-from pathlib import Path
 import simplekml
 from gpsexif import image_lon, image_lat
 
@@ -42,19 +40,16 @@ class Model:
 
         kml.savekmz(self.path_kmz, format = False)
 
-
-        #input("Pulse enter para finalizar: ") # solo para probar
-             
         mensaje = f"Se ha creado el KMZ con exito!!"
         return mensaje
         
-
     
     def _copiar_img (self, ruta_img_temp):
         for imagen in self.list_img:
             #print(ruta_img_temp)
             shutil.copy(imagen,ruta_img_temp)                   
         print('se han copiado las imagenes')
+
 
     def _comprimir_imagenes(self, ruta_img_temp):
         os.chdir(ruta_img_temp)  # me coloco en el directorio de las imagenes
@@ -66,15 +61,3 @@ class Model:
             img_orig.save(imagen, exif=exif)
         print("se han comprimido las imagenes")
         
-
-    
-
-if __name__ == '__main__':
-    imagenes_prueba = ('C:/Users/joha_/Desktop/PruebaOpenFile/imagenes_test/IMG_20200729_142826317_HDR.jpg', 
-                    'C:/Users/joha_/Desktop/PruebaOpenFile/imagenes_test/IMG_20200729_142959656.jpg', 
-                    'C:/Users/joha_/Desktop/PruebaOpenFile/imagenes_test/IMG_20200729_143007828.jpg',
-                        'C:/Users/joha_/Desktop/PruebaOpenFile/imagenes_test/IMG_20200729_143039395_HDR.jpg')   
-
-    instancia_modelo = Model(imagenes_prueba,True,os.path.join(os.getcwd(),'prueba.kmz') )
-    instancia_modelo.crear_kmz()
-
