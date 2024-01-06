@@ -12,7 +12,10 @@ class VentanaPpal():
     def __init__(self, window ):
         self.root = window
         self.root.title("PhotoKMZ")
-        self.root.attributes('-toolwindow', True)
+        self.root.geometry("350x150")
+        self.root.resizable(False,False)
+        self.root.eval('tk::PlaceWindow . center')
+
         
                
         ### Variables
@@ -26,8 +29,8 @@ class VentanaPpal():
                             
 
         # Frames
-        self.input_frame = ttk.LabelFrame(self.root, text=" Imagenes ")
-        self.input_frame.pack(padx=10, pady=10,fill='x', expand=True)
+        self.input_frame = ttk.LabelFrame(self.root, text=" IMAGENES ")
+        self.input_frame.pack(padx=5, pady=5, ipadx=10, ipady=10, fill='x', expand=True)
         
         # Etiquetas
         self.seleccion_label = Label(self.input_frame, textvariable=self.num_img, width=30)
@@ -39,10 +42,10 @@ class VentanaPpal():
 
         # Boton añadir/
         self.boton_añadir = Button(self.input_frame, text = "SELECCIONAR", command = self.seleccionar,width=12)
-        self.boton_añadir.grid(row=0, column=0)
+        self.boton_añadir.grid(row=0, column=0, padx=10)
         # Boton crear
         self.boton_crear = Button(self.root,text="CREAR KMZ",command=self.crear_kmz,width=12)
-        self.boton_crear.pack(padx=10, pady=10, expand=False)
+        self.boton_crear.pack(padx=5, pady=10, expand=False)
 
     
 
