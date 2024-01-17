@@ -3,8 +3,15 @@ import sys
 import os
 
 build_options = {'packages': [],
-                 'excludes': [],
-                 'include_files':['LICENSE','README.md',]}
+                 'excludes': ["tkinter",
+                              "unittest",
+                              "email",
+                              "http",
+                              "pydoc",
+                              ],
+                 'include_files':['LICENSE',
+                                  'src/photokmz/icons'],
+                 'zip_include_packages':["PyQt6"]}
 
 
 base = 'Win32GUI' if sys.platform=='win32' else None
@@ -18,13 +25,13 @@ executables = [
     Executable(os.path.join(ruta_absoluta, 'photokmz.py'),
                base=base,
                target_name = 'photokmz',
-               icon='src/photokmz/icono.ico',
+               icon='src/photokmz/icons/photokmz.ico',
                shortcut_name="PhotoKMZ",
                shortcut_dir="ProgramMenuFolder") #"DesktopFolder"
 ]
 
 setup(name='PhotoKMZ',
-      version = '0.1.0',
+      version = '0.2.0',
       description = 'Crea kmz a partir de fotografias',
       options = {'build_exe': build_options},
       author = 'Milton Villar',

@@ -1,7 +1,8 @@
-from tkinter import Tk
+import sys
+from PyQt6.QtWidgets import QApplication
 from view import VentanaPpal
 
 if __name__ == '__main__':
-    root_tk = Tk()
-    VentanaPpal(root_tk)
-    root_tk.mainloop()
+    app = QApplication(sys.argv)
+    ventana = VentanaPpal()
+    sys.exit(app.exec())

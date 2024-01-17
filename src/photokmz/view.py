@@ -1,83 +1,103 @@
-from tkinter import StringVar, Label, Button, Tk, ttk, Checkbutton, BooleanVar
 import os
+from PyQt6.QtWidgets import (QApplication, QWidget, QPushButton, QLabel, QLineEdit, QCheckBox ,
+                             QFileDialog, QMessageBox)
+from PyQt6.QtGui import QIcon
 from model import Model
-from tkinter.filedialog import askopenfilenames, asksaveasfilename, askdirectory
-from tkinter.messagebox import showinfo, showerror
 
-BASE_DIR = os.path.dirname((os.path.abspath(__name__)))
 
-class VentanaPpal():
-    """Clase para manejar los objetos tipo ventana
-    """
-    def __init__(self, window ):
-        self.root = window
-        self.root.title("PhotoKMZ")
-        self.root.geometry("350x150")
-        self.root.resizable(False,False)
-        self.root.eval('tk::PlaceWindow . center')
+class VentanaPpal (QWidget):
 
-        
-               
-        ### Variables
-        self.list_img = StringVar()
+    def __init__(self):
+        super().__init__()
+        self.variables_ui()
+        self.inicializar_ui()
+
+
+    def variables_ui(self):
+        self.path_file =''
         self.list_img = []
-        self.num_img = StringVar()
-        self.num_img.set('No hay imagenes seleccionadas')
-        self.compresion = BooleanVar()
-        self.compresion.set(True)
-        self.path_file = StringVar()
-                            
+        self.num_img = len(self.list_img)
+        self.compresion = True
 
-        # Frames
-        self.input_frame = ttk.LabelFrame(self.root, text=" IMAGENES ")
-        self.input_frame.pack(padx=5, pady=5, ipadx=10, ipady=10, fill='x', expand=True)
+
+    def inicializar_ui(self):
+        self.setFixedSize(400,150)
+        self.setWindowTitle("PhotoKMZ")
+        self.setWindowIcon(QIcon("./icons/photokmz.png"))
+        self.widgets_ui()
+        self.show()
+
+
+    def widgets_ui(self):
+
+        label_img = QLabel(self)
+        label_img.setText("Seleccionar un conjunto de imágenes que contengan información gps.")
+        label_img.move(10,10)
+
+        self.label_selec = QLineEdit(self)
+        self.label_selec.setText(f" {self.num_img} imágenes seleccionadas")
+        self.label_selec.setReadOnly(True)
+        self.label_selec.setGeometry(140,40,240,30)
+
+        boton_seleccionar = QPushButton(self)
+        boton_seleccionar.setText("SELECCIONAR")
+        boton_seleccionar.resize(120,30)
+        boton_seleccionar.move(20,40)
+        boton_seleccionar.clicked.connect(self.seleccionar_img)
+
+        self.check_compresion = QCheckBox(self)
+        self.check_compresion.setText("Reducir y comprimir")
+        self.check_compresion.setChecked(self.compresion)
+        self.check_compresion.move(140,75)
+        self.check_compresion.toggled.connect(self.click_compresion)
+
+        boton_crear = QPushButton(self)
+        boton_crear.setText("CREAR KMZ")
+        boton_crear.resize(360,40)
+        boton_crear.move(20,100)
+        boton_crear.clicked.connect(self.crear_kmz)
+   
+    
+    def seleccionar_img (self):
+        dialog = QFileDialog(self)
+        dialog.setDirectory(os.path.expanduser('~'))
+        dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        dialog.setNameFilter("Imágenes (*.jpeg *.jpg)")
+        dialog.setViewMode(QFileDialog.ViewMode.List)
+        if dialog.exec():
+            self.list_img = dialog.selectedFiles()
+            self.num_img = len(self.list_img)
+            self.label_selec.setText(f" {self.num_img} imágenes seleccionadas ")
+ 
         
-        # Etiquetas
-        self.seleccion_label = Label(self.input_frame, textvariable=self.num_img, width=30)
-        self.seleccion_label.grid(row=0,column=1)
+    def click_compresion(self, clicked):
+        self.compresion = clicked
 
-        #  	Checkbutton
-        self.compresion_check = Checkbutton(self.input_frame, text='Comprimir imagenes',variable=self.compresion)
-        self.compresion_check.grid(row=3,column=1)
 
-        # Boton añadir/
-        self.boton_añadir = Button(self.input_frame, text = "SELECCIONAR", command = self.seleccionar,width=12)
-        self.boton_añadir.grid(row=0, column=0, padx=10)
-        # Boton crear
-        self.boton_crear = Button(self.root,text="CREAR KMZ",command=self.crear_kmz,width=12)
-        self.boton_crear.pack(padx=5, pady=10, expand=False)
-
-    
-
-    ########## METODOS DE LA VISTA ############
-    def seleccionar (self):
-        self.list_img = askopenfilenames(filetypes=[("Imagenes",("*.jpg","*.jpeg"))
-                                                    ,("Todos",("*.*"))]
-                                                    ,initialdir=os.path.expanduser('~'))
-        self.num_img.set(f"{len(self.list_img)} imagenes seleccionadas")
-                
-
-    def examinar (self):        
-        self.destino.set(askdirectory(initialdir=os.path.expanduser('~')))
-        if self.destino.get() == '':
-            self.destino.set(os.path.expanduser('~'))
-    
-                 
-    def crear_kmz (self):        
-        if len(self.list_img) == 0 :
-            showerror(message = f"No hay imagenes seleccionadas \nPor favor seleccione imagenes para poder crear el archivo kmz."
-                       ,title = "Error")
+    def crear_kmz(self):
+        if self.num_img == 0:
+            QMessageBox.critical(self,"Error",
+                                 "ERROR\n"
+                                 "No hay imágenes seleccionadas.\n"
+                                 "Por favor añada imágenes para poder crear el archivo kmz.",
+                                 QMessageBox.StandardButton.Close)
         else:
-            self.path_file = asksaveasfilename(defaultextension='.kmz', filetypes=[('Archivos kmz','.kmz')])
-            file_name= os.path.basename(self.path_file)
+            self.path_file = QFileDialog.getSaveFileName(self,"Guardar",os.path.expanduser('~'),"archivo kmz(*.kmz)")[0]
+            file_name = os.path.basename(self.path_file)
             try:
                 objeto_model = Model(self.list_img,
-                                    self.compresion.get(),
+                                    self.compresion,
                                     self.path_file)
                 objeto_model.crear_kmz()
-                showinfo(message=f"Se ha creado {file_name} de manera exitosa"
-                        ,title="Creación finalizada")
+                QMessageBox.information(self,"Creación finalizada",
+                                        f"El archivo {file_name} se ha creado con exito !!!",
+                                        QMessageBox.StandardButton.Ok,
+                                        QMessageBox.StandardButton.Ok)
             except TypeError:
-                showerror(message = f"Ha ocurrido un error"
-                        ,title = "Error")
+                QMessageBox.critical(self,"Error",
+                                    "ERROR\n"
+                                    "ha ocurrido un error"
+                                    "Verifique las imágenes utilizadas.",
+                                    QMessageBox.StandardButton.Close,
+                                    QMessageBox.StandardButton.Close)
         
